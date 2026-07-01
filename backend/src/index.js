@@ -1,26 +1,33 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import sequelize from "./config/database.js"; // Importamos la conexión
 
-// Cargar las variables del archivo .env
 dotenv.config();
 
-// Crear servidor
 const app = express();
 
-// Middlewares obligatorios
-app.use(cors()); // Permite que el frontend se conecte sin bloqueos
-app.use(express.json()); // Te va a permitir recibir datos JSON más adelante
+app.use(cors());
+app.use(express.json());
 
-// Controlar ruta inicial
 app.get("/", (req, res) => {
   res.send("¡Backend inicial de NovaMarket funcionando!");
 });
 
-// Levantar servidor leyendo el puerto del .env (o 3001 por defecto)
 const port = process.env.PORT || 3001;
 
-app.locals.fechaInicio = new Date();
+// Función para probar la conexión a la base de datos
+async function conectarBaseDeDatos() {
+  try {
+    await sequelize.authenticate();
+    console.log("¡Conexión a PostgreSQL en Supabase establecida con éxito!");
+  } catch (error) {
+    console.error("No se pudo conectar a la base de datos:", error);
+  }
+}
+
+// Ejecutamos la prueba
+conectarBaseDeDatos();
 
 app.listen(port, () => {
   console.log(`Sitio escuchando en el puerto ${port}`);
